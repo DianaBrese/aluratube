@@ -5,25 +5,9 @@ import styled from 'styled-components';
 import { CSSReset } from "../src/components/CSSReset";
 import Menu from '../src/components/Menu';
 import { StyledTimeline } from '../src/components/Timeline';
-
-function HomePage() {
-  const estilosDaHomePage = {/* backgroundColor: 'red'*/ };
-
-  return (
-    <>
-    <CSSReset />
-      <div style={estilosDaHomePage}>
-        <Menu />
-        <Header />
-        <Timeline playlists={config.playlists} />
-      </div>
-    </>
-
-  )
-}
-
-export default HomePage
-
+import StyledBanner from '../src/components/Banner'
+import Image from 'next/image';
+import { StyledFavorites } from '../src/components/Favorites';
 
 
 const StyledHeader = styled.div`
@@ -33,7 +17,7 @@ const StyledHeader = styled.div`
     border-radius: 50%;
   }
   .user-info {
-    margin-top: 50px;
+    margin-top: 0px;
     display: flex;
     align-items: center;
     width: 100%;
@@ -41,12 +25,39 @@ const StyledHeader = styled.div`
   }
 `;
 
+
+function HomePage() {
+  const estilosDaHomePage = {/* backgroundColor: 'red'*/ };
+
+  return (
+    <>
+      <CSSReset />
+      <div style={estilosDaHomePage}>
+        <Menu />
+        <Banner banner={config.banner} />
+        <Header />
+        <Timeline playlists={config.playlists} />
+        <p style={ {marginLeft: '30px', fontWeight:'bold'} }>AluraTube Favoritos</p>
+        <Favorites favorites={config.favorites} />
+      </div>
+
+    </>
+
+  )
+}
+
+export default HomePage
+
+
+
+
+
 function Header() {
   return (
     <StyledHeader>
       {/* <img src="banner" /> */}
       <section className="user-info">
-        <img src={`https://github.com/${config.github}.png`} />
+        <ProfileImg />
         <div>
           <h2>{config.name}</h2>
           <p>{config.description}</p>
@@ -56,6 +67,24 @@ function Header() {
   )
 }
 
+function ProfileImg() {
+  const profile = `https://github.com/${config.github}.png`
+
+  return (
+    <img src={profile}></img>
+  )
+}
+function Banner(props) {
+  const bannerImg = props.banner;
+
+  return (
+    <StyledBanner>
+      <img src={bannerImg}></img>
+    </StyledBanner>
+  )
+}
+
+
 function Timeline(props) {
   const playlistNames = Object.keys(props.playlists)
 
@@ -63,17 +92,16 @@ function Timeline(props) {
   //Retorno por expressão
   return (
     <StyledTimeline>
-      {playlistNames.map((playlistNames) => {
+      {playlistNames.map((playlistNames, index) => {
         const videos = props.playlists[playlistNames];
-        console.log(playlistNames);
-        console.log(videos);
+
         return (
-          <section>
+          <section key={index}>
             <h2>{playlistNames}</h2>
             <div>
-              {videos.map((video) => {
+              {videos.map((video, index) => {
                 return (
-                  <a href={video.url}>
+                  <a href={video.url} key={index}>
                     <img src={video.thumb} />
                     <span>
                       {video.title}
@@ -88,4 +116,35 @@ function Timeline(props) {
       })}
     </StyledTimeline>
   )
+}
+
+function Favorites(props) {
+
+  const usersInfo = props.favorites
+
+  return (
+
+  <StyledFavorites>
+    
+    {
+
+      usersInfo.map((usersInfo, index) => {
+        const usersPictures = usersInfo.img
+        const userName = usersInfo.user
+        
+        return (
+              <div key={index}>
+                <Image src={usersPictures} width={100} height={100} alt={`ablubl[e]`} />
+                <div>
+                  <p> {userName} </p>
+                </div>
+              </div>
+        )
+      })
+    }
+    
+    </StyledFavorites>
+
+  )
+
 }
